@@ -49,6 +49,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp(){
+    var moneyCounter = remember {
+        mutableStateOf(0)
+    }
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -56,27 +59,31 @@ fun MyApp(){
     ) {
         Column(verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "$100", style = TextStyle(
+                Text(text = "$${moneyCounter.value}", style = TextStyle(
                     color=Color.White,
                     fontSize = 35.sp,
                     fontWeight =FontWeight.ExtraBold))
             Spacer(modifier = Modifier.height(130.dp))
-            CreateCircle()
+
+            CreateCircle(moneyCounter= moneyCounter.value){ newValue->
+                    moneyCounter.value= newValue
+
+            }
+            if (moneyCounter.value >25){
+               Text(text = "Lots of Money!")
+            }
         }
     }
 }
 
 @Composable
-fun CreateCircle(){
-    var moneyCounter by remember {
-        mutableStateOf(0)
-    }
+fun CreateCircle(moneyCounter:Int = 0, updateMoneyCounter: (Int)-> Unit){
+
     Card(modifier = Modifier
         .padding(3.dp)
         .size(105.dp)
         .clickable {
-            moneyCounter += 1
-            Log.d("Counter", "Create Article:$moneyCounter")
+            updateMoneyCounter(moneyCounter + 1)
         },
         shape = RectangleShape)
     {
